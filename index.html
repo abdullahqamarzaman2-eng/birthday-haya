@@ -1,32 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday!</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Haya!</title>
+<style>
+    /* Video background */
+    #bgVideo {
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        min-height: 100%;
+        z-index: -1;
+        object-fit: cover;
+    }
+
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
+        background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    }
+
+    .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+        padding: 20px;
+        z-index: 2;
+    }
+
+    .animated-text {
+        animation: fadeInUp 2s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(50px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #ff7eb3;
+        color: white;
+        border-radius: 10px;
+        margin-top: 20px;
+        transition: transform 0.2s;
+    }
+
+    button:hover { transform: scale(1.1); }
+
+    .balloon {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: float 5s infinite ease-in;
+    }
+
+    @keyframes float {
+        0% { transform: translateY(100vh) rotate(0deg); }
+        50% { transform: translateY(50vh) rotate(180deg); }
+        100% { transform: translateY(-20vh) rotate(360deg); }
+    }
+
+    #confettiCanvas {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 3;
+    }
+
+    @media(max-width: 600px) {
+        .content h1 { font-size: 24px; }
+        .content p { font-size: 16px; }
+        button { font-size: 16px; padding: 10px 20px; }
+    }
+</style>
 </head>
 <body>
-    <!-- Video Background -->
-    <video autoplay muted loop id="bgVideo">
-        <source src="background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
 
-    <!-- Background Music -->
-    <audio id="bgMusic" src="music.mp3" autoplay loop></audio>
+<!-- Video Background (embedded as Base64) -->
+<video autoplay muted loop id="bgVideo">
+    <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAkB1tZGF0AAACrwYF//+r3EXpvebZSLeWLNgg2SPu73gy" type="video/mp4">
+</video>
 
-    <!-- Content -->
-    <div class="content">
-        <h1 class="animated-text">🎉 Happy Birthday, [Name]! 🎉</h1>
-        <p class="animated-text">Wishing you a day full of love, joy, and surprises!</p>
-        <button onclick="playConfetti()">Celebrate Again!</button>
-    </div>
+<!-- Background Music (embedded as Base64) -->
+<audio id="bgMusic" autoplay loop>
+    <source src="data:audio/mp3;base64,SUQzBAAAAAABAFRYWFgAAAASAAADbWFqb3JfYnJhbmQAZGFzaABUWFhYAAAAEQAAA21pbm9yX3ZlcnNpb24AMABUWFhYAAAAHAAA" type="audio/mp3">
+</audio>
 
-    <!-- Canvas for Confetti -->
-    <canvas id="confettiCanvas"></canvas>
+<div class="content">
+    <h1 class="animated-text">🎉 Happy Birthday, Haya! 🎉</h1>
+    <p class="animated-text">Wishing you a day full of love and joy!</p>
+    <button onclick="playConfetti()">Celebrate Again!</button>
+</div>
 
-    <!-- Script -->
-    <script src="script.js"></script>
+<canvas id="confettiCanvas"></canvas>
+
+<script>
+    function loadConfetti(callback) {
+        if(window.confetti) return callback();
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js';
+        script.onload = callback;
+        document.body.appendChild(script);
+    }
+
+    function playConfetti() {
+        loadConfetti(() => {
+            confetti({ particleCount: 250, spread: 100, origin: { y: 0.6 } });
+        });
+    }
+
+    // Floating balloons
+    const colors = ['#ff4081','#ffeb3b','#4caf50','#2196f3','#ff9800'];
+    for(let i=0;i<20;i++){
+        let balloon = document.createElement('div');
+        balloon.classList.add('balloon');
+        balloon.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        balloon.style.left = Math.random()*100+'vw';
+        balloon.style.animationDuration = 3+Math.random()*5+'s';
+        balloon.style.width = 30+Math.random()*40+'px';
+        balloon.style.height = 40+Math.random()*60+'px';
+        document.body.appendChild(balloon);
+    }
+
+    window.onload = () => {
+        playConfetti();
+        const music = document.getElementById('bgMusic');
+        music.volume = 0.5;
+        music.play().catch(()=>console.log("Autoplay blocked."));
+        document.querySelectorAll('.animated-text')
+            .forEach((el,i)=>el.style.animationDelay=(i*0.5)+'s');
+    };
+</script>
+
 </body>
 </html>
